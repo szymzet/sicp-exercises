@@ -142,4 +142,24 @@
   (define (combiner old new) (* old new))
   (accumulate combiner 1 term a next b))
 
-(product id 1 nxt 5)
+;
+; 1.41
+;
+(define (double f)
+  (lambda (x) (f (f x))))
+
+;
+; 1.42
+;
+(define (compose f g) 
+  (lambda (x) (f (g x))))
+
+;
+; 1.43
+;
+(define (repeated f n)
+  (define (repeated-iter repeated-f i) 
+    (if (equal? i n)
+       repeated-f
+       (repeated-iter (compose f repeated-f) (+ i 1))))
+  (repeated-iter f 1))
