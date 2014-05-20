@@ -163,3 +163,58 @@
         ((pair? tree) (cons (tree-map proc (car tree))
                             (tree-map proc (cdr tree))))
         (else (proc tree))))
+
+;
+; 2.32
+;
+(define (subsets s)
+  (if (null? s)
+    (list '())
+    (let ((rest (subsets (cdr s))))
+      (append rest (map (lambda (subset)
+                          (cons (car s) subset))
+                        rest)))))
+
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+    initial
+    (op (car sequence)
+        (accumulate op initial (cdr sequence)))))
+
+;
+; 2.33
+;
+(define (acc-map p sequence)
+  (accumulate (lambda (x y) (cons (p x) y))
+              '()
+              sequence))
+
+(define (acc-append seq1 seq2)
+  (accumulate cons seq2 seq1))
+
+(define (acc-length sequence)
+  (accumulate (lambda (x y) (+ 1 y)) 0 sequence))
+
+;
+; 2.34
+;
+(define (horner-eval x coeff-seq)
+  (accumulate (lambda (this-coeff higher-terms)
+                (+ this-coeff (* x higher-terms)))
+              0
+              coeff-seq))
+
+;
+; 2.36
+;
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+             '()
+             (cons (accumulate op init (map car seqs))
+                   (accumulate-n op init (map cdr seqs)))))
+
+;
+; 2.37
+;
+(define (transpose mat)
+  (accumulate-n cons '() mat))
